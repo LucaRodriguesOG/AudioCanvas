@@ -1,0 +1,7 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs
+/AudioCanvas/.vs/AudioCanvas
+/AudioCanvas/x64/Debug
