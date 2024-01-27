@@ -35,7 +35,7 @@ void Renderer::Init() {
 		glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 
 	} catch (const std::runtime_error e) {
-		std::cout << "Eclipse Initialization Error: " << e.what() << std::endl;
+		std::cout << "AudioCanvas Renderer Initialization Error: " << e.what() << std::endl;
 		exit(1);
 	}
 }
@@ -51,7 +51,7 @@ void Renderer::Run() {
 			glfwPollEvents();
 		}
 	} catch (const std::runtime_error e) {
-		std::cout << "Eclipse Runtime Error: " << e.what() << std::endl;
+		std::cout << "AudioCanvas Renderer Runtime Error: " << e.what() << std::endl;
 		exit(1);
 	}
 }

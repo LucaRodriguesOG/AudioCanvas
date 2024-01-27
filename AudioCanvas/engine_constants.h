@@ -5,4 +5,4 @@
 
 const uint32_t WINDOW_WIDTH = 1280;
 const uint32_t WINDOW_HEIGHT = 960;
-const char* WINDOW_NAME = "Eclipse Engine";
+const char* WINDOW_NAME = "AudioCanvas v0.1";
