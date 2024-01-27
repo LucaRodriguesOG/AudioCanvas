@@ -5,6 +5,8 @@
 
 #include <iostream>
 
+#include "Shader.h"
+
 class Renderer {
 public:
 	Renderer();

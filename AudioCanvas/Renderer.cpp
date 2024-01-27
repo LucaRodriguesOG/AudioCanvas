@@ -7,6 +7,7 @@ Renderer::Renderer() {
 }
 
 Renderer::~Renderer() {
+	glfwTerminate();
 }
 
 void Renderer::Start() {
@@ -18,11 +19,11 @@ void Renderer::Init() {
 	try {
 		if (!glfwInit())
 			throw std::runtime_error("Failed to initialize GLFW.");
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, AUDIOCANVAS_OPENGL_VERSION_MAJOR);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, AUDIOCANVAS_OPENGL_VERSION_MINOR);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-		mWindow = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_NAME, nullptr, nullptr);
+		mWindow = glfwCreateWindow(AUDIOCANVAS_WINDOW_WIDTH, AUDIOCANVAS_WINDOW_HEIGHT, AUDIOCANVAS_WINDOW_NAME, nullptr, nullptr);
 		if (mWindow == nullptr)
 			throw std::runtime_error("Failed to create GLFW Window.");
 
@@ -32,11 +33,12 @@ void Renderer::Init() {
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 			throw std::runtime_error("Failed to initialize GLAD.");
 
-		glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+		glViewport(0, 0, AUDIOCANVAS_WINDOW_WIDTH, AUDIOCANVAS_WINDOW_HEIGHT);
+
+		Shader testShader("TestShader.vert");
 
 	} catch (const std::runtime_error e) {
 		std::cout << "AudioCanvas Renderer Initialization Error: " << e.what() << std::endl;
-		exit(1);
 	}
 }
 
@@ -52,7 +54,6 @@ void Renderer::Run() {
 		}
 	} catch (const std::runtime_error e) {
 		std::cout << "AudioCanvas Renderer Runtime Error: " << e.what() << std::endl;
-		exit(1);
 	}
 }
 

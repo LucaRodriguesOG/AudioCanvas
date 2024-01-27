@@ -1,12 +1,16 @@
 #include <iostream>
 
 #include "Renderer.h"
+#include "Shader.h"
 
 int main() {
+	{
+		Renderer gRenderer;
 
-	Renderer gRenderer;
+		gRenderer.Start();
+	}
 
-	gRenderer.Start();
+	std::cin.get();
 
 	return 0;
 }
