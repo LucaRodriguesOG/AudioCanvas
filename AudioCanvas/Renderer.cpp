@@ -55,9 +55,14 @@ void Renderer::Init() {
 
 void Renderer::Run() {
 	try {
+		double deltaTime = 0.0, lastTime = 0.0, now = 0.0;
 		while (!glfwWindowShouldClose(mWindow)) {
+			now = glfwGetTime();
+			deltaTime = now - lastTime;
+			lastTime = now;
+
 			Input();
-			Update();
+			Update(deltaTime);
 			Render();
 
 			glfwSwapBuffers(mWindow);
@@ -74,8 +79,10 @@ void Renderer::Input() {
 		glfwSetWindowShouldClose(mWindow, true);
 }
 
-void Renderer::Update() {
-
+void Renderer::Update(double deltaTime) {
+	glUniform1d(glGetUniformLocation(mShader.GetProgramID(), "deltaTime"), deltaTime);
+	glUniform1d(glGetUniformLocation(mShader.GetProgramID(), "programTime"), glfwGetTime());
+	glUniform2i(glGetUniformLocation(mShader.GetProgramID(), "canvasResolution"), AUDIOCANVAS_WINDOW_WIDTH, AUDIOCANVAS_WINDOW_HEIGHT);
 }
 
 void Renderer::Render() {

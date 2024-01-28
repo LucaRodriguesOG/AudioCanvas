@@ -18,7 +18,7 @@ private:
 	void Run();
 
 	void Input();
-	void Update();
+	void Update(double deltaTime);
 	void Render();
 
 	static void onFramebufferSizeCallback(GLFWwindow*, int, int);
