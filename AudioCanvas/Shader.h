@@ -5,20 +5,26 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <vector>
 #include <string>
 
 class Shader {
 public:
 	Shader();
-	Shader(std::string);
+	Shader(std::vector<std::string>);
+	~Shader();
 
-	void LoadFromFile(std::string);
+	void AddShaders(std::vector<std::string>);
 	void Compile();
-private:
-	GLenum GrabShaderExtension(std::string);
-	void CheckCompileErrors();
 
-	GLuint mShaderID;
-	GLenum mShaderType;
-	std::string mShaderCode;
+	GLuint GetProgramID();
+private:
+	void LoadShader(std::string);
+	GLenum GrabShaderExtension(std::string);
+	void CheckCompilerErrors(GLuint, GLenum);
+
+	GLuint mProgramID;
+	std::vector<GLuint> mShaderIDs;
+
+	std::vector<std::string> shaderFiles;
 };

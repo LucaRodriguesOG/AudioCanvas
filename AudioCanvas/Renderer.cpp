@@ -4,6 +4,7 @@
 
 Renderer::Renderer() {
 	mWindow = nullptr;
+	mVertexArrayObject = GL_ZERO;
 }
 
 Renderer::~Renderer() {
@@ -19,6 +20,7 @@ void Renderer::Init() {
 	try {
 		if (!glfwInit())
 			throw std::runtime_error("Failed to initialize GLFW.");
+
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, AUDIOCANVAS_OPENGL_VERSION_MAJOR);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, AUDIOCANVAS_OPENGL_VERSION_MINOR);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -35,10 +37,19 @@ void Renderer::Init() {
 
 		glViewport(0, 0, AUDIOCANVAS_WINDOW_WIDTH, AUDIOCANVAS_WINDOW_HEIGHT);
 
-		Shader testShader("TestShader.vert");
+		mShader.AddShaders({ "TestShader.vert", "TestShader.frag" });
+
+		mShader.Compile();
+
+		glGenVertexArrays(1, &mVertexArrayObject);
+
+		glBindVertexArray(mVertexArrayObject);
+
+		glUseProgram(mShader.GetProgramID());
 
 	} catch (const std::runtime_error e) {
 		std::cout << "AudioCanvas Renderer Initialization Error: " << e.what() << std::endl;
+		std::cout << "<!-- END OF ERROR --!>" << std::endl;
 	}
 }
 
@@ -54,6 +65,7 @@ void Renderer::Run() {
 		}
 	} catch (const std::runtime_error e) {
 		std::cout << "AudioCanvas Renderer Runtime Error: " << e.what() << std::endl;
+		std::cout << "<!-- END OF ERROR --!>" << std::endl;
 	}
 }
 
@@ -63,11 +75,14 @@ void Renderer::Input() {
 }
 
 void Renderer::Update() {
+
 }
 
 void Renderer::Render() {
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
+
+	glDrawArrays(GL_TRIANGLES, 0, 6);
 }
 
 void Renderer::onFramebufferSizeCallback(GLFWwindow* mWindow, int width, int height) {

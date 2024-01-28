@@ -43,5 +43,8 @@
     <None Include="TestShader.vert">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="TestShader.frag">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

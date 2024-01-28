@@ -24,4 +24,6 @@ private:
 	static void onFramebufferSizeCallback(GLFWwindow*, int, int);
 
 	GLFWwindow* mWindow;
+	Shader mShader;
+	GLuint mVertexArrayObject;
 };
