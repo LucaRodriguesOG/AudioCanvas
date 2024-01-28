@@ -4,8 +4,8 @@ in vec3 fragColor;
 
 out vec4 outColor;
 
-uniform double deltaTime;
-uniform double programTime;
+uniform float deltaTime;
+uniform float programTime;
 uniform ivec2 canvasResolution;
 
 // Code stolen from https://thebookofshaders.com/06/
@@ -35,7 +35,7 @@ vec3 hsb2rgb( in vec3 c ){
 }
 
 void main(void) {
-    vec2 st = gl_FragCoord.xy/canvasResolution;
+    vec2 st = vec2(gl_FragCoord.x + (programTime*200.0), gl_FragCoord.y) / canvasResolution;
     vec3 color = vec3(0.0);
 
     // We map x (0.0 - 1.0) to the hue (0.0 - 1.0)

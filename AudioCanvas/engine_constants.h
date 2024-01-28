@@ -8,4 +8,4 @@ const int AUDIOCANVAS_OPENGL_VERSION_MINOR = 6;
 
 const uint32_t AUDIOCANVAS_WINDOW_WIDTH = 1280;
 const uint32_t AUDIOCANVAS_WINDOW_HEIGHT = 960;
-const char* AUDIOCANVAS_WINDOW_NAME = "AudioCanvas v0.1";
+const char* AUDIOCANVAS_WINDOW_NAME = "AudioCanvas v0.5";

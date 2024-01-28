@@ -80,8 +80,8 @@ void Renderer::Input() {
 }
 
 void Renderer::Update(double deltaTime) {
-	glUniform1d(glGetUniformLocation(mShader.GetProgramID(), "deltaTime"), deltaTime);
-	glUniform1d(glGetUniformLocation(mShader.GetProgramID(), "programTime"), glfwGetTime());
+	glUniform1f(glGetUniformLocation(mShader.GetProgramID(), "deltaTime"), deltaTime);
+	glUniform1f(glGetUniformLocation(mShader.GetProgramID(), "programTime"), glfwGetTime());
 	glUniform2i(glGetUniformLocation(mShader.GetProgramID(), "canvasResolution"), AUDIOCANVAS_WINDOW_WIDTH, AUDIOCANVAS_WINDOW_HEIGHT);
 }
 
