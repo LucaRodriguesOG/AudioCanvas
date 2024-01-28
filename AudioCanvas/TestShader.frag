@@ -9,6 +9,7 @@ uniform float programTime;
 uniform ivec2 canvasResolution;
 
 // Code stolen from https://thebookofshaders.com/06/
+// Modified main function to translate side-to-side.
 
 vec3 rgb2hsb( in vec3 c ){
     vec4 K = vec4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);
