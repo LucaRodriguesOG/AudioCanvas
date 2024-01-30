@@ -7,35 +7,34 @@
 #include "Renderer.h"
 
 int RunRenderer() {
-	{
-		Renderer gRenderer;
+    {
+        Renderer gRenderer;
 
-		gRenderer.Start();
-	}
+        gRenderer.Start();
+    }
 
-	return 0;
+    return 0;
 }
 
 int main() {
-	ma_decoder decoder;
+    ma_decoder decoder;
 
-	ma_result result = ma_decoder_init_file("song-through-a-cardboard-world.wav", nullptr, &decoder);
-	if (result != MA_SUCCESS) {
-		return false;   // An error occurred.
-	}
+    ma_decoder_config decoderConfig = ma_decoder_config_init(ma_format_s16, 1, 44100);
 
-	ma_uint64 length;
+    ma_decoder_init_file("song-through-a-cardboard-world.wav", &decoderConfig, &decoder);
 
-	result = ma_decoder_get_length_in_pcm_frames(&decoder, &length);
+    ma_uint64 frameCountTotal;
+    ma_decoder_get_length_in_pcm_frames(&decoder, &frameCountTotal);
 
-	ma_decoder_seek_to_pcm_frame(&decoder, 0);
+    frameCountTotal = 44100;
 
-	ma_int16 frameData[44100];
+    std::vector<ma_int16>* pSampleFrames = new std::vector<ma_int16>(frameCountTotal);
 
-	ma_uint64 framesRead = 0;
-	result = ma_decoder_read_pcm_frames(&decoder, frameData, 44100, &framesRead);
+    ma_decoder_read_pcm_frames(&decoder, pSampleFrames->data(), frameCountTotal, NULL);
 
-	ma_decoder_uninit(&decoder);
+    delete pSampleFrames;
 
-	return RunRenderer();
+    ma_decoder_uninit(&decoder);
+
+    return 0;
 }
