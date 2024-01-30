@@ -46,7 +46,6 @@ void Renderer::Init() {
 		glBindVertexArray(mVertexArrayObject);
 
 		glUseProgram(mShader.GetProgramID());
-
 	} catch (const std::runtime_error e) {
 		std::cout << "AudioCanvas Renderer Initialization Error: " << e.what() << std::endl;
 		std::cout << "<!-- END OF ERROR --!>" << std::endl;
@@ -80,8 +79,8 @@ void Renderer::Input() {
 }
 
 void Renderer::Update(double deltaTime) {
-	glUniform1f(glGetUniformLocation(mShader.GetProgramID(), "deltaTime"), deltaTime);
-	glUniform1f(glGetUniformLocation(mShader.GetProgramID(), "programTime"), glfwGetTime());
+	glUniform1f(glGetUniformLocation(mShader.GetProgramID(), "deltaTime"), (float)deltaTime);
+	glUniform1f(glGetUniformLocation(mShader.GetProgramID(), "programTime"), (float)glfwGetTime());
 	glUniform2i(glGetUniformLocation(mShader.GetProgramID(), "canvasResolution"), AUDIOCANVAS_WINDOW_WIDTH, AUDIOCANVAS_WINDOW_HEIGHT);
 }
 
