@@ -1,9 +1,6 @@
 #define MINIAUDIO_IMPLEMENTATION
 #include <miniaudio.h>
 
-#include <stdio.h>
-#include <numeric>
-
 #include "Renderer.h"
 
 int RunRenderer() {
@@ -19,16 +16,15 @@ int RunRenderer() {
 int main() {
     ma_decoder decoder;
 
-    ma_decoder_config decoderConfig = ma_decoder_config_init(ma_format_s16, 1, 44100);
+    ma_decoder_config decoderConfig = ma_decoder_config_init(ma_format_s16, 2, 0);
+    decoderConfig.encodingFormat = ma_encoding_format_wav;
 
     ma_decoder_init_file("song-through-a-cardboard-world.wav", &decoderConfig, &decoder);
 
     ma_uint64 frameCountTotal;
     ma_decoder_get_length_in_pcm_frames(&decoder, &frameCountTotal);
 
-    frameCountTotal = 44100;
-
-    std::vector<ma_int16>* pSampleFrames = new std::vector<ma_int16>(frameCountTotal);
+    std::vector<ma_int16>* pSampleFrames = new std::vector<ma_int16>(frameCountTotal * 2);
 
     ma_decoder_read_pcm_frames(&decoder, pSampleFrames->data(), frameCountTotal, NULL);
 
@@ -36,5 +32,5 @@ int main() {
 
     ma_decoder_uninit(&decoder);
 
-    return 0;
+    return RunRenderer();
 }

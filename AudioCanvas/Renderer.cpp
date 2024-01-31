@@ -31,6 +31,7 @@ void Renderer::Init() {
 
 		glfwMakeContextCurrent(mWindow);
 		glfwSetFramebufferSizeCallback(mWindow, onFramebufferSizeCallback);
+		// glfwSwapInterval(1);
 
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 			throw std::runtime_error("Failed to initialize GLAD.");
@@ -54,7 +55,8 @@ void Renderer::Init() {
 
 void Renderer::Run() {
 	try {
-		double deltaTime = 0.0, lastTime = 0.0, now = 0.0;
+		double deltaTime = 0.0, lastTime = 0.0, now = 0.0, secondCounter = glfwGetTime();
+		long long framesPerSecond = 0;
 		while (!glfwWindowShouldClose(mWindow)) {
 			now = glfwGetTime();
 			deltaTime = now - lastTime;
@@ -66,6 +68,15 @@ void Renderer::Run() {
 
 			glfwSwapBuffers(mWindow);
 			glfwPollEvents();
+
+			if (now - secondCounter < 1.0) {
+				framesPerSecond++;
+			} else {
+				std::string title = "AudioCanvas v0.5 FPS: " + std::to_string(framesPerSecond);
+				glfwSetWindowTitle(mWindow, title.c_str());
+				framesPerSecond = 0;
+				secondCounter = glfwGetTime();
+			}
 		}
 	} catch (const std::runtime_error e) {
 		std::cout << "AudioCanvas Renderer Runtime Error: " << e.what() << std::endl;
