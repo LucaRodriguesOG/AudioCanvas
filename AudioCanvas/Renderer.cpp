@@ -31,7 +31,7 @@ void Renderer::Init() {
 
 		glfwMakeContextCurrent(mWindow);
 		glfwSetFramebufferSizeCallback(mWindow, onFramebufferSizeCallback);
-		// glfwSwapInterval(1);
+		glfwSwapInterval(1);
 
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 			throw std::runtime_error("Failed to initialize GLAD.");
