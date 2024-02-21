@@ -17,7 +17,7 @@ void DSP::InitDecoder() {
 	decoderConfig = ma_decoder_config_init(ma_format_s16, 2, 44100);
 	decoderConfig.encodingFormat = ma_encoding_format_wav;
 
-	ma_decoder_init_file("song-through-a-cardboard-world.wav", &decoderConfig, &decoder);
+	ma_decoder_init_file("song-piano-channel-test-4.wav", NULL, &decoder);
 }
 
 void DSP::InitData() {
@@ -34,6 +34,7 @@ void DSP::InitData() {
 		else {
 			pChannel02->push_back(pSampleFrames->at(i));
 		}
+		// std::cout << pSampleFrames->at(i) << std::endl;
 	}
 
 	int timeChunks = ceil(frameCountTotal / 4410.0) - 1;
@@ -48,6 +49,12 @@ void DSP::InitData() {
 		pChannel01Chunked->push_back(tChannel01Chunk);
 		pChannel02Chunked->push_back(tChannel02Chunk);
 	}
+	numChunks = pChannel01Chunked->size();
+	//for (int i = 0; i < pChannel02Chunked->size(); i++) {
+	//	for (int j = 0; j < 4410; j++) {
+	//		std::cout << "CHANNEL 1: " << pChannel01Chunked->at(i)->at(j) << " CHANNEL 2: " << pChannel02Chunked->at(i)->at(j) << std::endl;
+	//	}
+	//}
 }
 
 void DSP::InitFFT() {
@@ -55,16 +62,27 @@ void DSP::InitFFT() {
 	out = (fftw_complex*)fftw_malloc(sizeof(fftw_complex) * N);
 
 	p = fftw_plan_dft_1d(N, in, out, FFTW_FORWARD, FFTW_ESTIMATE);
-
-	for (size_t i = 0; i < N; i++) {
-		in[i][0] = pChannel01Chunked->at(0)->at(i);
-		in[i][1] = 0.0;
-	}
 }
 
-fftw_complex* DSP::FFT() {
+std::vector<fftw_complex*> DSP::FFT() {
 
-	fftw_execute(p);
+	for (size_t i = 0; i < numChunks; i++) {
+		for (size_t j = 0; j < N; j++) {
+			in[j][0] = pChannel01Chunked->at(i)->at(j);
+			in[j][1] = 0.0;
+		}
+		fftw_execute(p);
+		fullOut.push_back(out);
+	}
 
-	return out;
+	for (size_t i = 0; i < numChunks; i++) {
+		for (size_t j = 0; j < N; j++) {
+			in[j][0] = pChannel02Chunked->at(i)->at(j);
+			in[j][1] = 0.0;
+		}
+		fftw_execute(p);
+		fullOut.push_back(out);
+	}
+
+	return fullOut;
 }

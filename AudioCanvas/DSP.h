@@ -15,7 +15,7 @@ public:
 	void InitDecoder();
 	void InitData();
 	void InitFFT();
-	fftw_complex* FFT();
+	std::vector<fftw_complex*> FFT();
 
 private:
 	// MINIAUDIO
@@ -25,6 +25,7 @@ private:
 	// DATA
 	// consider putting this as a param for different time chunks
 	int N = 4410;
+	int numChunks = 0;
 	std::vector<ma_int16>* pSampleFrames;
 	std::vector<ma_int16>* pChannel01 = new std::vector<ma_int16>();
 	std::vector<ma_int16>* pChannel02 = new std::vector<ma_int16>();
@@ -35,4 +36,5 @@ private:
 	// FFTW3
 	fftw_complex* in, * out;
 	fftw_plan p;
+	std::vector<fftw_complex*> fullOut;
 };

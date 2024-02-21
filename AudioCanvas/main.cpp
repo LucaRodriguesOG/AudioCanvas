@@ -20,17 +20,39 @@ int main() {
     dsp.InitData();
     dsp.InitFFT();
     
-    fftw_complex* out = dsp.FFT();
+    std::vector<fftw_complex*> transformedData = dsp.FFT();
+    
+    double real1;
+    double imag1;
+    double magnitude1;
+    double frequency1;
 
-    for (int i = 0; i < 4410 / 2; ++i) { // Only iterate over the first half of the output
-        double real = out[i][0];
-        double imag = out[i][1];
-        double magnitude = sqrt(real * real + imag * imag);
-        double frequency = i * 44100 / 4410;
+    double real2;
+    double imag2;
+    double magnitude2;
+    double frequency2;
 
-        // Example: print magnitude and frequency for each bin
-        std::cout << "Bin " << i << ": Frequency = " << frequency << " Hz, Magnitude = " << magnitude << std::endl;
+    int dataSize = transformedData.size();
+
+    for (int i = 0; i < dataSize / 4; i++) {
+        std::cout << transformedData[i][0][0] << std::endl << transformedData[i + dataSize / 4][0][0] << std::endl << std::endl;
     }
+
+    //for (int i = 0; i < dataSize / 4; i++) { // iterate thru half data, contains {channel1, channel2}
+    //    for (int j = 0; j < 4410 / 2; j++) {
+    //        real1 = transformedData[i][j][0];
+    //        imag1 = transformedData[i][j][1];
+    //        magnitude1 = sqrt(real1 * real1 + imag1 * imag1);
+    //        frequency1 = j * 44100 / 4410;
+    //        std::cout << "Chunk " << i << " Bin " << j << ": Frequency1 = " << frequency1 << " Hz, Magnitude1 = " << magnitude1 << std::endl;
+    //        
+    //        real2 = transformedData[i + (dataSize / 2)][j][0];
+    //        imag2 = transformedData[i + (dataSize / 2)][j][1];
+    //        magnitude2 = sqrt(real2 * real2 + imag2 * imag2);
+    //        frequency2 = j * 44100 / 4410;
+    //        std::cout << "Chunk " << i << " Bin " << j << ": Frequency2 = " << frequency2 << " Hz, Magnitude2 = " << magnitude2 << std::endl;
+    //    }
+    //}
 
     return RunRenderer();
 }
