@@ -36,7 +36,7 @@ int main() {
     int dataSize = c1Data.size();
     
 
-    for (int i = 0; i < dataSize / 4; i++) { // iterate thru half data, contains {channel1, channel2}
+    for (int i = 0; i < 2; i++) { // iterate thru half data, contains {channel1, channel2}
         for (int j = 0; j < 4410 / 2; j++) {
             real1 = c1Data[i][j][0];
             imag1 = c1Data[i][j][1];

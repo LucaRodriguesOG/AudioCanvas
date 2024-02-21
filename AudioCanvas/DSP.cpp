@@ -17,7 +17,7 @@ void DSP::InitDecoder() {
 	decoderConfig = ma_decoder_config_init(ma_format_s16, 2, 44100);
 	decoderConfig.encodingFormat = ma_encoding_format_wav;
 
-	ma_decoder_init_file("song-piano-channel-test.wav", NULL, &decoder);
+	ma_decoder_init_file("test-500left-2000right.wav", NULL, &decoder);
 }
 
 void DSP::InitData() {
@@ -34,7 +34,6 @@ void DSP::InitData() {
 		else {
 			pChannel02->push_back(pSampleFrames->at(i));
 		}
-		// std::cout << pSampleFrames->at(i) << std::endl;
 	}
 
 	int timeChunks = ceil(frameCountTotal / 4410.0) - 1;
@@ -50,11 +49,6 @@ void DSP::InitData() {
 		pChannel02Chunked->push_back(tChannel02Chunk);
 	}
 	numChunks = pChannel01Chunked->size();
-	//for (int i = 0; i < pChannel02Chunked->size(); i++) {
-	//	for (int j = 0; j < 4410; j++) {
-	//		std::cout << "CHANNEL 1: " << pChannel01Chunked->at(i)->at(j) << " CHANNEL 2: " << pChannel02Chunked->at(i)->at(j) << std::endl;
-	//	}
-	//}
 }
 
 void DSP::InitFFT() {
