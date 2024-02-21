@@ -15,7 +15,7 @@ public:
 	void InitDecoder();
 	void InitData();
 	void InitFFT();
-	std::vector<fftw_complex*> FFT();
+	void FFT(std::vector<fftw_complex*>& c1, std::vector<fftw_complex*>& c2);
 
 private:
 	// MINIAUDIO
@@ -36,5 +36,6 @@ private:
 	// FFTW3
 	fftw_complex* in, * out;
 	fftw_plan p;
-	std::vector<fftw_complex*> fullOut;
+	fftw_complex* in2, * out2;
+	fftw_plan p2;
 };
