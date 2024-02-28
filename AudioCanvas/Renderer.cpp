@@ -16,6 +16,11 @@ void Renderer::Start() {
 	Run();
 }
 
+void Renderer::SetChannelData(std::vector<fftw_complex*>* channel01, std::vector<fftw_complex*>* channel02) {
+	mChannel01Data = channel01;
+	mChannel02Data = channel02;
+}
+
 void Renderer::Init() {
 	try {
 		if (!glfwInit())
@@ -100,6 +105,23 @@ void Renderer::Render() {
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	glDrawArrays(GL_TRIANGLES, 0, 6);
+}
+
+GLint Renderer::CreateChunkTexture(fftw_complex* chunk) {
+	GLuint tempTextureID = 0;
+	glGenTextures(1, &tempTextureID);
+	glBindTexture(GL_TEXTURE_1D, tempTextureID);
+
+	glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+
+	glTexImage1D(GL_TEXTURE_1D, 0, GL_R32F, 4410, 0, GL_RED, GL_DOUBLE, chunk);
+
+	return tempTextureID;
+}
+
+void Renderer::UpdateChunkTexture(fftw_complex*, int) {
 }
 
 void Renderer::onFramebufferSizeCallback(GLFWwindow* mWindow, int width, int height) {

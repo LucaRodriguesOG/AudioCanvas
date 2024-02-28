@@ -15,6 +15,12 @@ public:
 	void InitDecoder();
 	void InitData();
 	void InitFFT();
+
+	// TODO: Change FFT function to instead output floats of the complex's magnitude 
+	// Still going to be a vector of arrays. But the arrays will no longer be of type fftw_complex.
+	// They will just be of float (which will represent the magnitude. Also, the magnitude will
+	// be normalized. Find magnitude by finding local max of dataset.
+
 	void FFT(std::vector<fftw_complex*>& c1, std::vector<fftw_complex*>& c2);
 
 private:
@@ -38,4 +44,7 @@ private:
 	fftw_plan p;
 	fftw_complex* in2, * out2;
 	fftw_plan p2;
+
+	// Filename
+	std::string mFileName;
 };
