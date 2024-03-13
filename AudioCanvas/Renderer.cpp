@@ -107,7 +107,7 @@ void Renderer::Render() {
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 }
 
-GLint Renderer::CreateChunkTexture(fftw_complex* chunk) {
+GLuint Renderer::CreateChunkTexture(fftw_complex* chunk) {
 	GLuint tempTextureID = 0;
 	glGenTextures(1, &tempTextureID);
 	glBindTexture(GL_TEXTURE_1D, tempTextureID);

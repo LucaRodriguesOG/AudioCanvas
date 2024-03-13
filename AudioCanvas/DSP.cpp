@@ -1,7 +1,7 @@
 #include "DSP.h"
 
 DSP::DSP() {
-	mFileName = "song-through-a-cardboard-world.wav";
+	mFileName = "test-500left-2000right.wav";
 }
 
 DSP::DSP(std::string FileName) : mFileName(FileName) {
