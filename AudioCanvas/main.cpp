@@ -13,13 +13,13 @@ int RunRenderer() {
 
     return 0;
 }
-int RunDSP() {
+int RunDSP(std::vector<fftw_complex*>& c1Data, std::vector<fftw_complex*>& c2Data) {
     DSP dsp;
     dsp.InitDecoder();
     dsp.InitData();
     dsp.InitFFT();
-    std::vector<fftw_complex*> c1Data;
-    std::vector<fftw_complex*> c2Data;
+    //std::vector<fftw_complex*> c1Data;
+    //std::vector<fftw_complex*> c2Data;
 
     dsp.FFT(c1Data, c2Data);
 
@@ -69,14 +69,14 @@ int RunDSP() {
 
 int main() {
     {
-       /* DSP dsp;
+        /*DSP dsp;
         dsp.InitDecoder();
         dsp.InitData();
-        dsp.InitFFT();
+        dsp.InitFFT();*/
         std::vector<fftw_complex*> c1Data;
         std::vector<fftw_complex*> c2Data;
 
-        dsp.FFT(c1Data, c2Data);
+       /* dsp.FFT(c1Data, c2Data);
 
         double real1;
         double imag1;
@@ -88,11 +88,11 @@ int main() {
         double magnitude2;
         double frequency2;*/
 
-        RunDSP();
+        RunDSP(c1Data, c2Data);
 
         Renderer gRenderer;
 
-        //gRenderer.SetChannelData(&c1Data, &c2Data);
+        gRenderer.SetChannelData(&c1Data, &c2Data);
 
         gRenderer.Start();
     }
