@@ -8,6 +8,7 @@
 #include <string>
 
 #include "Shader.h"
+#include "GlobalConstants.h"
 
 class Renderer {
 public:

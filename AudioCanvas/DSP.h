@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include "GlobalConstants.h"
 
 /*
 
@@ -29,12 +30,16 @@ public:
 	// MINIAUDIO
 	void InitDecoder();
 	void InitData();
+	// FFTW3
 	void InitFFT();
 	void InitFFT2();
 	void DeinitFFT();
 	void DeinitFFT2();
-
-	void FFT(std::vector<fftw_complex*>& c1, std::vector<fftw_complex*>& c2);
+	void FFT(std::vector<fftw_complex*>* c1, std::vector<fftw_complex*>* c2);
+	int Run(std::vector<std::vector<float>>* data1, std::vector<std::vector<float>>* data2);
+	// MISC
+	void Window();
+	// void Window(std::vector<std::vector<ma_int16>*>* CtoW, std::vector<std::vector<ma_int16>*>* CtoW2);
 
 private:
 	// MINIAUDIO
@@ -42,13 +47,12 @@ private:
 	ma_decoder_config decoderConfig;
 	ma_uint64 frameCountTotal;
 	// DATA
-	// consider putting this as a param for different time chunks
-	const int N = 1024;
-	int numChunks = 0;
+	const int N = CHUNK_SIZE;
+	int numChunks;
 	std::vector<ma_int16>* pSampleFrames;
 	std::vector<ma_int16>* pChannel01 = new std::vector<ma_int16>();
 	std::vector<ma_int16>* pChannel02 = new std::vector<ma_int16>();
-	int timeChunks = ceil(frameCountTotal / 1024.0) - 1;
+	int timeChunks = 0;
 	// consider not hardcoding 2 channels
 	std::vector<std::vector<ma_int16>*>* pChannel01Chunked = new std::vector<std::vector<ma_int16>*>();
 	std::vector<std::vector<ma_int16>*>* pChannel02Chunked = new std::vector<std::vector<ma_int16>*>();

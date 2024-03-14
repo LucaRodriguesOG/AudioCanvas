@@ -136,6 +136,7 @@
   <ItemGroup>
     <ClInclude Include="DSP.h" />
     <ClInclude Include="engine_constants.h" />
+    <ClInclude Include="GlobalConstants.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Shader.h" />
   </ItemGroup>

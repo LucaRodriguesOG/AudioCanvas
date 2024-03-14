@@ -79,7 +79,7 @@ void Renderer::Run() {
 			glfwSwapBuffers(mWindow);
 			glfwPollEvents();
 
-			if (glfwGetTime() - chunkTimer1 > 0.02321995465 * 2.0) {
+			if (glfwGetTime() - chunkTimer1 > (double(CHUNK_SIZE)/SAMPLE_RATE) * 2.0) {
 				mCurrentChunkIndex++;
 				UpdateChunkTexture(mChannel01Data->at(mCurrentChunkIndex % mChannel01Data->size()), mChannel01Texture);
 				chunkTimer1 = glfwGetTime();
@@ -128,14 +128,14 @@ GLuint Renderer::CreateChunkTexture(std::vector<float> chunk) {
 	glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
 
-	glTexImage1D(GL_TEXTURE_1D, 0, GL_R32F, 1024, 0, GL_RED, GL_FLOAT, chunk.data());
+	glTexImage1D(GL_TEXTURE_1D, 0, GL_R32F, CHUNK_SIZE, 0, GL_RED, GL_FLOAT, chunk.data());
 
 	return tempTextureID;
 }
 
 void Renderer::UpdateChunkTexture(std::vector<float> chunk, int tex) {
 	glBindTexture(GL_TEXTURE_1D, tex);
-	glTexSubImage1D(GL_TEXTURE_1D, 0, 0, 1024, GL_RED, GL_FLOAT, chunk.data());
+	glTexSubImage1D(GL_TEXTURE_1D, 0, 0, CHUNK_SIZE, GL_RED, GL_FLOAT, chunk.data());
 }
 
 void Renderer::onFramebufferSizeCallback(GLFWwindow* mWindow, int width, int height) {

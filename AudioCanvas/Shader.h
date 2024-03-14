@@ -7,6 +7,7 @@
 #include <sstream>
 #include <vector>
 #include <string>
+#include "GlobalConstants.h"
 
 class Shader {
 public:
