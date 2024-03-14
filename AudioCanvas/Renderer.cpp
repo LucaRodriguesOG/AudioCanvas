@@ -16,7 +16,7 @@ void Renderer::Start() {
 	Run();
 }
 
-void Renderer::SetChannelData(std::vector<fftw_complex*>* channel01, std::vector<fftw_complex*>* channel02) {
+void Renderer::SetChannelData(std::vector<std::vector<float>>* channel01, std::vector<std::vector<float>>* channel02) {
 	mChannel01Data = channel01;
 	mChannel02Data = channel02;
 }
@@ -36,14 +36,14 @@ void Renderer::Init() {
 
 		glfwMakeContextCurrent(mWindow);
 		glfwSetFramebufferSizeCallback(mWindow, onFramebufferSizeCallback);
-		glfwSwapInterval(1);
+		glfwSwapInterval(0);
 
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 			throw std::runtime_error("Failed to initialize GLAD.");
 
 		glViewport(0, 0, AUDIOCANVAS_WINDOW_WIDTH, AUDIOCANVAS_WINDOW_HEIGHT);
 
-		mShader.AddShaders({ "TestShader.vert", "TestShader.frag" });
+		mShader.AddShaders({ "acsvShader.vert", "FFT_Display.frag" });
 
 		mShader.Compile();
 
@@ -52,6 +52,10 @@ void Renderer::Init() {
 		glBindVertexArray(mVertexArrayObject);
 
 		glUseProgram(mShader.GetProgramID());
+
+		mCurrentChunkIndex = 0;
+
+		mChannel01Texture = CreateChunkTexture(mChannel01Data->at(mCurrentChunkIndex));
 	} catch (const std::runtime_error e) {
 		std::cout << "AudioCanvas Renderer Initialization Error: " << e.what() << std::endl;
 		std::cout << "<!-- END OF ERROR --!>" << std::endl;
@@ -62,6 +66,7 @@ void Renderer::Run() {
 	try {
 		double deltaTime = 0.0, lastTime = 0.0, now = 0.0, secondCounter = glfwGetTime();
 		long long framesPerSecond = 0;
+		double chunkTimer1 = glfwGetTime();
 		while (!glfwWindowShouldClose(mWindow)) {
 			now = glfwGetTime();
 			deltaTime = now - lastTime;
@@ -73,6 +78,12 @@ void Renderer::Run() {
 
 			glfwSwapBuffers(mWindow);
 			glfwPollEvents();
+
+			if (glfwGetTime() - chunkTimer1 > 0.023 * 2.0) {
+				mCurrentChunkIndex++;
+				UpdateChunkTexture(mChannel01Data->at(mCurrentChunkIndex % mChannel01Data->size()), mChannel01Texture);
+				chunkTimer1 = glfwGetTime();
+			}
 
 			if (now - secondCounter < 1.0) {
 				framesPerSecond++;
@@ -107,21 +118,24 @@ void Renderer::Render() {
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 }
 
-GLuint Renderer::CreateChunkTexture(fftw_complex* chunk) {
+GLuint Renderer::CreateChunkTexture(std::vector<float> chunk) {
 	GLuint tempTextureID = 0;
 	glGenTextures(1, &tempTextureID);
+	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_1D, tempTextureID);
 
 	glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
 
-	glTexImage1D(GL_TEXTURE_1D, 0, GL_R32F, 4410, 0, GL_RED, GL_DOUBLE, chunk);
+	glTexImage1D(GL_TEXTURE_1D, 0, GL_R32F, 1024, 0, GL_RED, GL_FLOAT, chunk.data());
 
 	return tempTextureID;
 }
 
-void Renderer::UpdateChunkTexture(fftw_complex*, int) {
+void Renderer::UpdateChunkTexture(std::vector<float> chunk, int tex) {
+	glBindTexture(GL_TEXTURE_1D, tex);
+	glTexSubImage1D(GL_TEXTURE_1D, 0, 0, 1024, GL_RED, GL_FLOAT, chunk.data());
 }
 
 void Renderer::onFramebufferSizeCallback(GLFWwindow* mWindow, int width, int height) {

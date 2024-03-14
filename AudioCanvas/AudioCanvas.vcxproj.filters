@@ -46,11 +46,12 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="TestShader.vert">
+    <None Include="acsvShader.vert">
       <Filter>Shaders</Filter>
     </None>
     <None Include="TestShader.frag">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="FFT_Display.frag" />
   </ItemGroup>
 </Project>

@@ -16,7 +16,7 @@ public:
 
 	void Start();
 
-	void SetChannelData(std::vector<fftw_complex*>* channel01, std::vector<fftw_complex*>* channel02);
+	void SetChannelData(std::vector<std::vector<float>>* channel01, std::vector<std::vector<float>>* channel02);
 private:
 	void Init();
 	void Run();
@@ -25,8 +25,8 @@ private:
 	void Update(double deltaTime);
 	void Render();
 
-	GLuint CreateChunkTexture(fftw_complex*);
-	void UpdateChunkTexture(fftw_complex*, int);
+	GLuint CreateChunkTexture(std::vector<float>);
+	void UpdateChunkTexture(std::vector<float> chunk, int);
 
 	static void onFramebufferSizeCallback(GLFWwindow*, int, int);
 
@@ -37,6 +37,8 @@ private:
 	GLint mChannel01Texture;
 	GLint mChannel02Texture;
 
-	std::vector<fftw_complex*>* mChannel01Data;
-	std::vector<fftw_complex*>* mChannel02Data;
+	std::vector<std::vector<float>>* mChannel01Data;
+	std::vector<std::vector<float>>* mChannel02Data;
+
+	GLuint mCurrentChunkIndex;
 };

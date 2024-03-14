@@ -1,7 +1,9 @@
 #include "DSP.h"
 
 DSP::DSP() {
-	mFileName = "test-500left-2000right.wav";
+	mFileName = "song-through-a-cardboard-world.wav";
+	//InitFFT();
+	//InitFFT2();
 }
 
 DSP::DSP(std::string FileName) : mFileName(FileName) {
@@ -40,14 +42,14 @@ void DSP::InitData() {
 		}
 	}
 
-	int timeChunks = ceil(frameCountTotal / 4410.0) - 1; // frames / 100 ms chunks
+	int timeChunks = ceil(frameCountTotal / 1024.0) - 1; // frames / 100 ms chunks
 
 	for (int i = 0; i < timeChunks; i++) {
 		std::vector<ma_int16>* tChannel01Chunk = new std::vector<ma_int16>();
 		std::vector<ma_int16>* tChannel02Chunk = new std::vector<ma_int16>();
-		for (int j = 0; j < 4410; j++) { // create chunks from sample data
-			tChannel01Chunk->push_back(pChannel01->at(size_t(i) * 4410 + j));
-			tChannel02Chunk->push_back(pChannel02->at(size_t(i) * 4410 + j));
+		for (int j = 0; j < 1024; j++) { // create chunks from sample data
+			tChannel01Chunk->push_back(pChannel01->at(size_t(i) * 1024 + j));
+			tChannel02Chunk->push_back(pChannel02->at(size_t(i) * 1024 + j));
 		}
 		pChannel01Chunked->push_back(tChannel01Chunk); // put chunks in channel arrays
 		pChannel02Chunked->push_back(tChannel02Chunk);
@@ -60,28 +62,52 @@ void DSP::InitFFT() { // standard fft initialization
 	out = (fftw_complex*)fftw_malloc(sizeof(fftw_complex) * N);
 	p = fftw_plan_dft_1d(N, in, out, FFTW_FORWARD, FFTW_ESTIMATE);
 
+	/*in2 = (fftw_complex*)fftw_malloc(sizeof(fftw_complex) * N);
+	out2 = (fftw_complex*)fftw_malloc(sizeof(fftw_complex) * N);
+	p2 = fftw_plan_dft_1d(N, in2, out2, FFTW_FORWARD, FFTW_ESTIMATE);*/
+}
+
+void DSP::InitFFT2() { // standard fft initialization
+	/*i = (fftw_complex*)fftw_malloc(sizeof(fftw_complex) * N);
+	o = (fftw_complex*)fftw_malloc(sizeof(fftw_complex) * N);
+	plan = fftw_plan_dft_1d(N, in, out, FFTW_FORWARD, FFTW_ESTIMATE);*/
+
 	in2 = (fftw_complex*)fftw_malloc(sizeof(fftw_complex) * N);
 	out2 = (fftw_complex*)fftw_malloc(sizeof(fftw_complex) * N);
 	p2 = fftw_plan_dft_1d(N, in2, out2, FFTW_FORWARD, FFTW_ESTIMATE);
 }
 
-void DSP::FFT(std::vector<fftw_complex*>& c1, std::vector<fftw_complex*>& c2) {
+void DSP::DeinitFFT() {
+	fftw_free(in);
+	fftw_free(out);
+	fftw_free(p);
+}
+void DSP::DeinitFFT2() {
+	fftw_free(in2);
+	fftw_free(out2);
+	fftw_free(p2);
+}
 
+void DSP::FFT(std::vector<fftw_complex*>& c1, std::vector<fftw_complex*>& c2) {
 	for (size_t i = 0; i < numChunks; i++) { // create channel 1 input
+		InitFFT();
 		for (size_t j = 0; j < N; j++) {
 			in[j][0] = pChannel01Chunked->at(i)->at(j);
 			in[j][1] = 0.0;
 		}
 		fftw_execute(p); // execute FFT on channel 2
 		c1.push_back(out); // put output in c1
+		//DeinitFFT();
 	}
 
 	for (size_t i = 0; i < numChunks; i++) { // create channel 2 input
+		InitFFT2();
 		for (size_t j = 0; j < N; j++) {
 			in2[j][0] = pChannel02Chunked->at(i)->at(j);
 			in2[j][1] = 0.0;
 		}
 		fftw_execute(p2); // execute FFt on channel 2
 		c2.push_back(out2); // put output in c2
+		//DeinitFFT2();
 	}
 }
