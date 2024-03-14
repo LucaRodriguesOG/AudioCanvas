@@ -176,10 +176,11 @@ int DSP::Run(std::vector<std::vector<float>>* data1, std::vector<std::vector<flo
 	return 0;
 }
 
-void DSP::Window() {
+void DSP::Window() { // hann window function 
 	for (int i = 0; i < pChannel01Chunked->size(); i++) {
-		for (int j = 0; j < CHUNK_SIZE; j++) {
-			pChannel01Chunked->at(i)->at(j) = ma_int16(int(pChannel01Chunked->at(i)->at(j)) * 0.5 * (1 - cos(2 * 3.14159 * i / CHUNK_SIZE)));
+		for (int j = 0; j < CHUNK_SIZE / 2; j++) {
+			pChannel01Chunked->at(i)->at(j) = ma_int16(int(pChannel01Chunked->at(i)->at(j)) * (cos(3.1415926535 * j / CHUNK_SIZE) * cos(3.1415926535 * j / CHUNK_SIZE) / CHUNK_SIZE));
+			pChannel01Chunked->at(i)->at(j + (CHUNK_SIZE / 2)) = 0;
 		}
 	}
 }

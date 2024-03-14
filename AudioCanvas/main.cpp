@@ -22,7 +22,7 @@ int main() {
 		std::vector<std::vector<float>> c1Data;
 		std::vector<std::vector<float>> c2Data;
 
-		DSP dsp("song-make-u-sweat.wav");
+		DSP dsp("song-through-a-cardboard-world.wav");
 		dsp.Run(&c1Data, &c2Data);
 
 		ma_result result;
@@ -36,7 +36,7 @@ int main() {
 
 		gRenderer.SetChannelData(&c1Data, &c2Data);
 
-		ma_engine_play_sound(&engine, "song-make-u-sweat.wav", NULL);
+		ma_engine_play_sound(&engine, "song-through-a-cardboard-world.wav", NULL);
 		ma_engine_set_volume(&engine, 0.1f);
 
 		gRenderer.Start();
