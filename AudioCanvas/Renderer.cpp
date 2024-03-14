@@ -79,7 +79,7 @@ void Renderer::Run() {
 			glfwSwapBuffers(mWindow);
 			glfwPollEvents();
 
-			if (glfwGetTime() - chunkTimer1 > 0.023 * 2.0) {
+			if (glfwGetTime() - chunkTimer1 > 0.02321995465 * 2.0) {
 				mCurrentChunkIndex++;
 				UpdateChunkTexture(mChannel01Data->at(mCurrentChunkIndex % mChannel01Data->size()), mChannel01Texture);
 				chunkTimer1 = glfwGetTime();

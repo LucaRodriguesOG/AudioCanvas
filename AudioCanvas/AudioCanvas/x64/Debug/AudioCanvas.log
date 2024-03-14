@@ -1,19 +1,5 @@
-﻿  main.cpp
-C:\Users\Ryno9\source\repos\AudioCanvas\AudioCanvas\DSP.h(51,50): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-  (compiling source file 'main.cpp')
-  
-C:\Users\Ryno9\source\repos\AudioCanvas\AudioCanvas\main.cpp(39,15): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\Ryno9\source\repos\AudioCanvas\AudioCanvas\main.cpp(74,58): warning C4244: '=': conversion from 'double' to '_Ty', possible loss of data
-C:\Users\Ryno9\source\repos\AudioCanvas\AudioCanvas\main.cpp(74,58): warning C4244:         with
-C:\Users\Ryno9\source\repos\AudioCanvas\AudioCanvas\main.cpp(74,58): warning C4244:         [
-C:\Users\Ryno9\source\repos\AudioCanvas\AudioCanvas\main.cpp(74,58): warning C4244:             _Ty=float
-C:\Users\Ryno9\source\repos\AudioCanvas\AudioCanvas\main.cpp(74,58): warning C4244:         ]
-C:\Users\Ryno9\source\repos\AudioCanvas\AudioCanvas\main.cpp(85,58): warning C4244: '=': conversion from 'double' to '_Ty', possible loss of data
-C:\Users\Ryno9\source\repos\AudioCanvas\AudioCanvas\main.cpp(85,58): warning C4244:         with
-C:\Users\Ryno9\source\repos\AudioCanvas\AudioCanvas\main.cpp(85,58): warning C4244:         [
-C:\Users\Ryno9\source\repos\AudioCanvas\AudioCanvas\main.cpp(85,58): warning C4244:             _Ty=float
-C:\Users\Ryno9\source\repos\AudioCanvas\AudioCanvas\main.cpp(85,58): warning C4244:         ]
-C:\Users\Ryno9\source\repos\AudioCanvas\AudioCanvas\main.cpp(39,6): warning C4189: 'dataSize': local variable is initialized but not referenced
+﻿  Renderer.cpp
+C:\Users\Ryno9\source\repos\AudioCanvas\AudioCanvas\Renderer.cpp(141,54): warning C4100: 'mWindow': unreferenced formal parameter
   AudioCanvas.vcxproj -> C:\Users\Ryno9\source\repos\AudioCanvas\AudioCanvas\x64\Debug\AudioCanvas.exe
   'pwsh.exe' is not recognized as an internal or external command,
   operable program or batch file.

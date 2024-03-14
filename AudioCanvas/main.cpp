@@ -109,7 +109,7 @@ int main() {
 		gRenderer.SetChannelData(&c1Data, &c2Data);
 
 		ma_engine_play_sound(&engine, "song-through-a-cardboard-world.wav", NULL);
-		ma_engine_set_volume(&engine, 1.0f);
+		ma_engine_set_volume(&engine, 0.1f);
 
 		gRenderer.Start();
 
