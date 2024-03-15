@@ -61,14 +61,14 @@ void DSP::InitData() {
 }
 
 std::vector<std::vector<std::vector<double>>> DSP::FFT() {
-
 	std::vector<std::vector<std::vector<double>>> result(numChunks, std::vector<std::vector<double>>(N, std::vector<double>(2)));
-	fftw_complex* in = new fftw_complex[CHUNK_SIZE];
-	fftw_complex* out = new fftw_complex[CHUNK_SIZE];
 	fftw_plan p;
-	p = fftw_plan_dft_1d(N, in, out, FFTW_FORWARD, FFTW_ESTIMATE);
 
 	for (int i = 0; i < numChunks; i++) { // for every chunk we have
+		fftw_complex* in = fftw_alloc_complex(CHUNK_SIZE);
+		fftw_complex* out = fftw_alloc_complex(CHUNK_SIZE);
+		p = fftw_plan_dft_1d(N, in, out, FFTW_FORWARD, FFTW_ESTIMATE);
+
 		for (int j = 0; j < N; j++) { // for every sample we have
 			in[j][0] = pChannel01Chunked->at(i)->at(j); // for current chunk, populate input with all samples
 			in[j][1] = 0;
@@ -80,9 +80,12 @@ std::vector<std::vector<std::vector<double>>> DSP::FFT() {
 			result.at(i).at(j).at(0) = out[j][0]; // for current chunk, populate result with real and imag parts
 			result.at(i).at(j).at(1) = out[j][1];
 		}
+		fftw_destroy_plan(p);
+		fftw_free(in);
+		fftw_free(out);
+		
 	}
 
-	fftw_destroy_plan(p);
 	fftw_cleanup();
 
 	return result;
