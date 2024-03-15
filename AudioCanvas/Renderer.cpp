@@ -6,7 +6,7 @@ Renderer::Renderer() {
 	mWindow = nullptr;
 	mVertexArrayObject = GL_ZERO;
 
-	RunningShaders = { "acsvShader.vert", "RayMarchingExample.frag" };
+	RunningShaders = { "acsvShader.vert", "FFT_Display.frag" };
 }
 
 Renderer::~Renderer() {
@@ -134,8 +134,8 @@ GLuint Renderer::CreateChunkTexture(std::vector<float> chunk) {
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_1D, tempTextureID);
 
-	glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
 
 	glTexImage1D(GL_TEXTURE_1D, 0, GL_R32F, CHUNK_SIZE, 0, GL_RED, GL_FLOAT, chunk.data());
