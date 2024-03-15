@@ -31,11 +31,7 @@ public:
 	void InitDecoder();
 	void InitData();
 	// FFTW3
-	void InitFFT();
-	void InitFFT2();
-	void DeinitFFT();
-	void DeinitFFT2();
-	void FFT(std::vector<fftw_complex*>* c1, std::vector<fftw_complex*>* c2);
+	std::vector<std::vector<std::vector<double>>> FFT();
 	int Run(std::vector<std::vector<float>>* data1, std::vector<std::vector<float>>* data2);
 	// MISC
 	void Window();
@@ -61,6 +57,7 @@ private:
 	fftw_plan p;
 	fftw_complex* in2, * out2;
 	fftw_plan p2;
+	//std::vector<std::vector<double>> result;
 
 	// Filename
 	std::string mFileName;

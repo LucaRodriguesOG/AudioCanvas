@@ -4,8 +4,6 @@ DSP::DSP() {
 	mFileName = "song-through-a-cardboard-world.wav";
 	InitDecoder();
 	InitData();
-	//InitFFT();
-	//InitFFT2();
 }
 
 DSP::DSP(std::string FileName) : mFileName(FileName) {
@@ -20,8 +18,6 @@ DSP::~DSP() {
 	delete pSampleFrames;
 
 	ma_decoder_uninit(&decoder);
-	DeinitFFT();
-	DeinitFFT2();
 }
 
 void DSP::InitDecoder() {
@@ -64,107 +60,90 @@ void DSP::InitData() {
 	Window();
 }
 
-void DSP::InitFFT() { // standard fft initialization
-	in = (fftw_complex*)fftw_malloc(sizeof(fftw_complex) * N);
-	out = (fftw_complex*)fftw_malloc(sizeof(fftw_complex) * N);
+std::vector<std::vector<std::vector<double>>> DSP::FFT() {
+
+	std::vector<std::vector<std::vector<double>>> result(numChunks, std::vector<std::vector<double>>(N, std::vector<double>(2)));
+	fftw_complex* in = new fftw_complex[CHUNK_SIZE];
+	fftw_complex* out = new fftw_complex[CHUNK_SIZE];
+	fftw_plan p;
 	p = fftw_plan_dft_1d(N, in, out, FFTW_FORWARD, FFTW_ESTIMATE);
-}
 
-void DSP::InitFFT2() { // standard fft initialization
-	in2 = (fftw_complex*)fftw_malloc(sizeof(fftw_complex) * N);
-	out2 = (fftw_complex*)fftw_malloc(sizeof(fftw_complex) * N);
-	p2 = fftw_plan_dft_1d(N, in2, out2, FFTW_FORWARD, FFTW_ESTIMATE);
-}
+	for (int i = 0; i < numChunks; i++) { // for every chunk we have
+		for (int j = 0; j < N; j++) { // for every sample we have
+			in[j][0] = pChannel01Chunked->at(i)->at(j); // for current chunk, populate input with all samples
+			in[j][1] = 0;
+		}
 
-void DSP::DeinitFFT() {
-	fftw_free(in);
-	fftw_free(out);
+		fftw_execute(p);
+
+		for (int j = 0; j < N; j++) { // for every bin we have (out bin # is directly correlated with in samples)
+			result.at(i).at(j).at(0) = out[j][0]; // for current chunk, populate result with real and imag parts
+			result.at(i).at(j).at(1) = out[j][1];
+		}
+	}
+
 	fftw_destroy_plan(p);
-}
-void DSP::DeinitFFT2() {
-	fftw_free(in2);
-	fftw_free(out2);
-	fftw_destroy_plan(p2);
-}
+	fftw_cleanup();
 
-void DSP::FFT(std::vector<fftw_complex*>* c1, std::vector<fftw_complex*>* c2) {
-	for (size_t i = 0; i < numChunks; i++) { // create channel 1 input
-		InitFFT();
-		for (size_t j = 0; j < N; j++) {
-			in[j][0] = pChannel01Chunked->at(i)->at(j);
-			in[j][1] = 0.0;
-		}
-		fftw_execute(p); // execute FFT on channel 2
-		c1->push_back(out); // put output in c1
-		//DeinitFFT();
-	}
-	for (size_t i = 0; i < numChunks; i++) { // create channel 2 input
-		InitFFT2();
-		for (size_t j = 0; j < N; j++) {
-			in2[j][0] = pChannel02Chunked->at(i)->at(j);
-			in2[j][1] = 0.0;
-		}
-		fftw_execute(p2); // execute FFt on channel 2
-		c2->push_back(out2); // put output in c2
-	}
+	return result;
 }
 
 int DSP::Run(std::vector<std::vector<float>>* data1, std::vector<std::vector<float>>* data2) {
-	std::vector<fftw_complex*> c1Data;
-	std::vector<fftw_complex*> c2Data;
-
-	this->FFT(&c1Data, &c2Data);
+	std::vector<std::vector<std::vector<double>>> fft;
+	//std::vector<std::vector<std::vector<double>>> fft2;
+	
+	fft = this->FFT();
 
 	double real1;
 	double imag1;
 	double magnitude1;
 
-	double real2;
-	double imag2;
-	double magnitude2;
+	//double real2;
+	//double imag2;
+	//double magnitude2;
 
 	double frequency;
 
-	int dataSize = c1Data.size();
+	int dataSize = fft.size();
 
 	double max = 0.0;
 
-	for (int i = 0; i < c1Data.size(); i++) { // c1Data.size() for full song
+	for (int i = 0; i < fft.size(); i++) { // c1Data.size() for full song
 		for (int j = 0; j < CHUNK_SIZE / 2; j++) { // iterate thru half data, contains {channel1, channel2}
-			real1 = c1Data[i][j][0]; // index 1: chunk, index 2: bin, index 3: real/imag
-			imag1 = c1Data[i][j][1];
+			real1 = fft[i][j][0]; // index 1: chunk, index 2: bin, index 3: real/imag
+			imag1 = fft[i][j][1];
 			magnitude1 = sqrt(real1 * real1 + imag1 * imag1);
 			//frequency = j * 44100 / CHUNK_SIZE;
 			//std::cout << "Chunk " << i << " Bin " << j << ": Frequency1 = " << frequency << " Hz, Magnitude1 = " << magnitude1 << std::endl;
 
-			real2 = c2Data[i][j][0];
-			imag2 = c2Data[i][j][1];
-			magnitude2 = sqrt(real2 * real2 + imag2 * imag2);
+			//real2 = c2Data[i][j][0];
+			//imag2 = c2Data[i][j][1];
+			//magnitude2 = sqrt(real2 * real2 + imag2 * imag2);
 			//frequency = j * 44100 / CHUNK_SIZE;
 			//std::cout << "Chunk " << i << " Bin " << j << ": Frequency2 = " << frequency << " Hz, Magnitude2 = " << magnitude2 << std::endl;
 
 			if (magnitude1 > max) { // find max of all magnitudes
 				max = magnitude1;
-				if (magnitude2 > max) {
+				/*if (magnitude2 > max) {
 					max = magnitude2;
-				}
+				}*/
 			}
 		}
 	}
 	std::cout << "MAX MAGNITUDE: " << max << std::endl;
 
-	for (size_t i = 0; i < c1Data.size(); i++) {
+	for (size_t i = 0; i < fft.size(); i++) {
 		std::vector<float> tempBins(CHUNK_SIZE);
 		for (size_t j = 0; j < CHUNK_SIZE; j++) {
-			double realSquared = c1Data[i][j][0] * c1Data[i][j][0];
-			double imaginarySquared = c1Data[i][j][1] * c1Data[i][j][1];
+			double realSquared = fft[i][j][0] * fft[i][j][0];
+			double imaginarySquared = fft[i][j][1] * fft[i][j][1];
 			tempBins.at(j) = sqrt(realSquared + imaginarySquared) / max;
 		}
 		data1->push_back(tempBins);
 	}
 
 
-	for (size_t i = 0; i < c2Data.size(); i++) {
+	/*for (size_t i = 0; i < c2Data.size(); i++) {
 		std::vector<float> tempBins(CHUNK_SIZE);
 		for (size_t j = 0; j < CHUNK_SIZE; j++) {
 			double realSquared = c2Data[i][j][0] * c2Data[i][j][0];
@@ -172,7 +151,7 @@ int DSP::Run(std::vector<std::vector<float>>* data1, std::vector<std::vector<flo
 			tempBins.at(j) = sqrt(realSquared + imaginarySquared) / max;
 		}
 		data2->push_back(tempBins);
-	}
+	}*/
 	return 0;
 }
 
