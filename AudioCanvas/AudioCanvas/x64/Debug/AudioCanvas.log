@@ -1,5 +1,28 @@
-﻿  Renderer.cpp
-C:\Users\Ryno9\source\repos\AudioCanvas\AudioCanvas\Renderer.cpp(141,54): warning C4100: 'mWindow': unreferenced formal parameter
+﻿  DSP.cpp
+C:\Users\Ryno9\source\repos\AudioCanvas\AudioCanvas\DSP.cpp(50,58): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+C:\Users\Ryno9\source\repos\AudioCanvas\AudioCanvas\DSP.cpp(62,37): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\Ryno9\source\repos\AudioCanvas\AudioCanvas\DSP.cpp(128,15): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\Ryno9\source\repos\AudioCanvas\AudioCanvas\DSP.cpp(161,58): warning C4244: '=': conversion from 'double' to '_Ty', possible loss of data
+C:\Users\Ryno9\source\repos\AudioCanvas\AudioCanvas\DSP.cpp(161,58): warning C4244:         with
+C:\Users\Ryno9\source\repos\AudioCanvas\AudioCanvas\DSP.cpp(161,58): warning C4244:         [
+C:\Users\Ryno9\source\repos\AudioCanvas\AudioCanvas\DSP.cpp(161,58): warning C4244:             _Ty=float
+C:\Users\Ryno9\source\repos\AudioCanvas\AudioCanvas\DSP.cpp(161,58): warning C4244:         ]
+C:\Users\Ryno9\source\repos\AudioCanvas\AudioCanvas\DSP.cpp(172,58): warning C4244: '=': conversion from 'double' to '_Ty', possible loss of data
+C:\Users\Ryno9\source\repos\AudioCanvas\AudioCanvas\DSP.cpp(172,58): warning C4244:         with
+C:\Users\Ryno9\source\repos\AudioCanvas\AudioCanvas\DSP.cpp(172,58): warning C4244:         [
+C:\Users\Ryno9\source\repos\AudioCanvas\AudioCanvas\DSP.cpp(172,58): warning C4244:             _Ty=float
+C:\Users\Ryno9\source\repos\AudioCanvas\AudioCanvas\DSP.cpp(172,58): warning C4244:         ]
+C:\Users\Ryno9\source\repos\AudioCanvas\AudioCanvas\DSP.cpp(126,9): warning C4101: 'frequency': unreferenced local variable
+C:\Users\Ryno9\source\repos\AudioCanvas\AudioCanvas\DSP.cpp(128,6): warning C4189: 'dataSize': local variable is initialized but not referenced
+  Renderer.cpp
+C:\Users\Ryno9\source\repos\AudioCanvas\AudioCanvas\Renderer.cpp(151,54): warning C4100: 'mWindow': unreferenced formal parameter
+C:\Users\Ryno9\source\repos\AudioCanvas\AudioCanvas\Renderer.cpp(155,89): warning C4100: 'mods': unreferenced formal parameter
+C:\Users\Ryno9\source\repos\AudioCanvas\AudioCanvas\Renderer.cpp(155,63): warning C4100: 'scancode': unreferenced formal parameter
+C:\Users\Ryno9\source\repos\AudioCanvas\AudioCanvas\Renderer.cpp(155,42): warning C4100: 'window': unreferenced formal parameter
+  Shader.cpp
+  main.cpp
+  Generating Code...
+C:\Users\Ryno9\source\repos\AudioCanvas\AudioCanvas\Shader.cpp(68,1): warning C4715: 'Shader::Recompile': not all control paths return a value
   AudioCanvas.vcxproj -> C:\Users\Ryno9\source\repos\AudioCanvas\AudioCanvas\x64\Debug\AudioCanvas.exe
   'pwsh.exe' is not recognized as an internal or external command,
   operable program or batch file.

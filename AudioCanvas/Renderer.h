@@ -30,6 +30,11 @@ private:
 	void UpdateChunkTexture(std::vector<float> chunk, int);
 
 	static void onFramebufferSizeCallback(GLFWwindow*, int, int);
+	static void onKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+
+	double mCompileTime;
+
+	std::vector<std::string> RunningShaders;
 
 	GLFWwindow* mWindow;
 	Shader mShader;

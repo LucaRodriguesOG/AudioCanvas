@@ -181,6 +181,7 @@ void DSP::Window() { // hann window function
 		for (int j = 0; j < CHUNK_SIZE / 2; j++) {
 			pChannel01Chunked->at(i)->at(j) = ma_int16(int(pChannel01Chunked->at(i)->at(j)) * (cos(3.1415926535 * j / CHUNK_SIZE) * cos(3.1415926535 * j / CHUNK_SIZE) / CHUNK_SIZE));
 			pChannel01Chunked->at(i)->at(j + (CHUNK_SIZE / 2)) = 0;
+			//pChannel01Chunked->at(i)->at(j) = ma_int16(int(pChannel01Chunked->at(i)->at(j)) * (0.53836 * (0.46164 - cos(2.0 * 3.1415926535 * j / (CHUNK_SIZE - 1))))); // hamming window function (hann has 0.5 for both)
 		}
 	}
 }

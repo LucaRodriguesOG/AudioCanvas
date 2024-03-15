@@ -5,6 +5,8 @@
 Renderer::Renderer() {
 	mWindow = nullptr;
 	mVertexArrayObject = GL_ZERO;
+
+	RunningShaders = { "acsvShader.vert", "RayMarchingExample.frag" };
 }
 
 Renderer::~Renderer() {
@@ -36,6 +38,7 @@ void Renderer::Init() {
 
 		glfwMakeContextCurrent(mWindow);
 		glfwSetFramebufferSizeCallback(mWindow, onFramebufferSizeCallback);
+		glfwSetKeyCallback(mWindow, onKeyCallback);
 		glfwSwapInterval(0);
 
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -43,9 +46,11 @@ void Renderer::Init() {
 
 		glViewport(0, 0, AUDIOCANVAS_WINDOW_WIDTH, AUDIOCANVAS_WINDOW_HEIGHT);
 
-		mShader.AddShaders({ "acsvShader.vert", "FFT_Display.frag" });
+		mShader.AddShaders(RunningShaders);
 
 		mShader.Compile();
+
+		mCompileTime = glfwGetTime();
 
 		glGenVertexArrays(1, &mVertexArrayObject);
 
@@ -103,6 +108,11 @@ void Renderer::Run() {
 void Renderer::Input() {
 	if (glfwGetKey(mWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(mWindow, true);
+	if (glfwGetKey(mWindow, GLFW_KEY_SPACE) == GLFW_PRESS && (glfwGetTime() - mCompileTime > 1.0)) {
+		mCompileTime = glfwGetTime();
+		std::cout << "Issue recompile" << std::endl;
+		glUseProgram(mShader.Recompile(RunningShaders));
+	}
 }
 
 void Renderer::Update(double deltaTime) {
@@ -140,4 +150,9 @@ void Renderer::UpdateChunkTexture(std::vector<float> chunk, int tex) {
 
 void Renderer::onFramebufferSizeCallback(GLFWwindow* mWindow, int width, int height) {
 	glViewport(0, 0, width, height);
+}
+
+void Renderer::onKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+	if (key == GLFW_KEY_E && action == GLFW_PRESS)
+		std::cout << "Issue recompile." << std::endl;
 }
