@@ -27,6 +27,9 @@
     <ClCompile Include="Shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DSP.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Renderer.h">
@@ -38,13 +41,23 @@
     <ClInclude Include="Shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DSP.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GlobalConstants.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="TestShader.vert">
+    <None Include="acsvShader.vert">
       <Filter>Shaders</Filter>
     </None>
     <None Include="TestShader.frag">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="FFT_Display.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="RayMarchingExample.frag" />
   </ItemGroup>
 </Project>

@@ -41,6 +41,32 @@ void Shader::Compile() {
     }
 }
 
+int Shader::Recompile(std::vector<std::string> shaders) {
+    mShaderIDs.clear();
+
+    for (auto& filename : shaders) {
+        LoadShader(filename);
+    }
+
+    GLuint newProgramID = glCreateProgram();
+
+    for (auto shader : mShaderIDs) {
+        glAttachShader(newProgramID, shader);
+    }
+
+    glLinkProgram(newProgramID);
+
+    if (CheckCompilerErrors(newProgramID, GL_PROGRAM)) {
+        glDeleteProgram(mProgramID);
+        mProgramID = newProgramID;
+        return newProgramID;
+    }
+
+    for (auto shader : mShaderIDs) {
+        glDeleteShader(shader);
+    }
+}
+
 GLuint Shader::GetProgramID() {
     return mProgramID;
 }
@@ -94,21 +120,25 @@ GLenum Shader::GrabShaderExtension(std::string filename) {
     return GL_ZERO;
 }
 
-void Shader::CheckCompilerErrors(GLuint id, GLenum type) {
-    int success;
+int Shader::CheckCompilerErrors(GLuint id, GLenum type) {
+    int success = GL_TRUE;
     char infoLog[1024];
 
     if (type == GL_PROGRAM) {
         glGetProgramiv(id, GL_LINK_STATUS, &success);
         if (!success) {
             glGetProgramInfoLog(id, 1024, NULL, infoLog);
-            throw std::runtime_error("Failed to link program - " + std::string(infoLog));
+            std::cout << ("Failed to link program - " + std::string(infoLog)) << std::endl;
+            return success;
         }
     } else if (type == GL_SHADER) {
         glGetShaderiv(id, GL_COMPILE_STATUS, &success);
         if (!success) {
             glGetShaderInfoLog(id, 1024, NULL, infoLog);
-            throw std::runtime_error("Failed to compile shader - " + std::string(infoLog));
+            std::cout << ("Failed to compile shader - " + std::string(infoLog)) << std::endl;
+            return success;
         }
     }
+
+    return success;
 }

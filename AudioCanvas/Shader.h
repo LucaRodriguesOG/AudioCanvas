@@ -7,6 +7,7 @@
 #include <sstream>
 #include <vector>
 #include <string>
+#include "GlobalConstants.h"
 
 class Shader {
 public:
@@ -16,12 +17,13 @@ public:
 
 	void AddShaders(std::vector<std::string>);
 	void Compile();
+	int Recompile(std::vector<std::string>);
 
 	GLuint GetProgramID();
 private:
 	void LoadShader(std::string);
 	GLenum GrabShaderExtension(std::string);
-	void CheckCompilerErrors(GLuint, GLenum);
+	int CheckCompilerErrors(GLuint, GLenum);
 
 	GLuint mProgramID;
 	std::vector<GLuint> mShaderIDs;

@@ -5,6 +5,8 @@
 Renderer::Renderer() {
 	mWindow = nullptr;
 	mVertexArrayObject = GL_ZERO;
+
+	RunningShaders = { "acsvShader.vert", "FFT_Display.frag" };
 }
 
 Renderer::~Renderer() {
@@ -14,6 +16,11 @@ Renderer::~Renderer() {
 void Renderer::Start() {
 	Init();
 	Run();
+}
+
+void Renderer::SetChannelData(std::vector<std::vector<float>>* channel01, std::vector<std::vector<float>>* channel02) {
+	mChannel01Data = channel01;
+	mChannel02Data = channel02;
 }
 
 void Renderer::Init() {
@@ -31,15 +38,19 @@ void Renderer::Init() {
 
 		glfwMakeContextCurrent(mWindow);
 		glfwSetFramebufferSizeCallback(mWindow, onFramebufferSizeCallback);
+		glfwSetKeyCallback(mWindow, onKeyCallback);
+		glfwSwapInterval(0);
 
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 			throw std::runtime_error("Failed to initialize GLAD.");
 
 		glViewport(0, 0, AUDIOCANVAS_WINDOW_WIDTH, AUDIOCANVAS_WINDOW_HEIGHT);
 
-		mShader.AddShaders({ "TestShader.vert", "TestShader.frag" });
+		mShader.AddShaders(RunningShaders);
 
 		mShader.Compile();
+
+		mCompileTime = glfwGetTime();
 
 		glGenVertexArrays(1, &mVertexArrayObject);
 
@@ -47,6 +58,9 @@ void Renderer::Init() {
 
 		glUseProgram(mShader.GetProgramID());
 
+		mCurrentChunkIndex = 0;
+
+		mChannel01Texture = CreateChunkTexture(mChannel01Data->at(mCurrentChunkIndex));
 	} catch (const std::runtime_error e) {
 		std::cout << "AudioCanvas Renderer Initialization Error: " << e.what() << std::endl;
 		std::cout << "<!-- END OF ERROR --!>" << std::endl;
@@ -55,7 +69,9 @@ void Renderer::Init() {
 
 void Renderer::Run() {
 	try {
-		double deltaTime = 0.0, lastTime = 0.0, now = 0.0;
+		double deltaTime = 0.0, lastTime = 0.0, now = 0.0, secondCounter = glfwGetTime();
+		long long framesPerSecond = 0;
+		double chunkTimer1 = glfwGetTime();
 		while (!glfwWindowShouldClose(mWindow)) {
 			now = glfwGetTime();
 			deltaTime = now - lastTime;
@@ -67,6 +83,21 @@ void Renderer::Run() {
 
 			glfwSwapBuffers(mWindow);
 			glfwPollEvents();
+
+			if (glfwGetTime() - chunkTimer1 > (double(CHUNK_SIZE)/SAMPLE_RATE) * 2.0) {
+				mCurrentChunkIndex++;
+				UpdateChunkTexture(mChannel01Data->at(mCurrentChunkIndex % mChannel01Data->size()), mChannel01Texture);
+				chunkTimer1 = glfwGetTime();
+			}
+
+			if (now - secondCounter < 1.0) {
+				framesPerSecond++;
+			} else {
+				std::string title = "AudioCanvas v0.5 FPS: " + std::to_string(framesPerSecond);
+				glfwSetWindowTitle(mWindow, title.c_str());
+				framesPerSecond = 0;
+				secondCounter = glfwGetTime();
+			}
 		}
 	} catch (const std::runtime_error e) {
 		std::cout << "AudioCanvas Renderer Runtime Error: " << e.what() << std::endl;
@@ -77,11 +108,16 @@ void Renderer::Run() {
 void Renderer::Input() {
 	if (glfwGetKey(mWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(mWindow, true);
+	if (glfwGetKey(mWindow, GLFW_KEY_SPACE) == GLFW_PRESS && (glfwGetTime() - mCompileTime > 1.0)) {
+		mCompileTime = glfwGetTime();
+		std::cout << "Issue recompile" << std::endl;
+		glUseProgram(mShader.Recompile(RunningShaders));
+	}
 }
 
 void Renderer::Update(double deltaTime) {
-	glUniform1f(glGetUniformLocation(mShader.GetProgramID(), "deltaTime"), deltaTime);
-	glUniform1f(glGetUniformLocation(mShader.GetProgramID(), "programTime"), glfwGetTime());
+	glUniform1f(glGetUniformLocation(mShader.GetProgramID(), "deltaTime"), (float)deltaTime);
+	glUniform1f(glGetUniformLocation(mShader.GetProgramID(), "programTime"), (float)glfwGetTime());
 	glUniform2i(glGetUniformLocation(mShader.GetProgramID(), "canvasResolution"), AUDIOCANVAS_WINDOW_WIDTH, AUDIOCANVAS_WINDOW_HEIGHT);
 }
 
@@ -92,6 +128,31 @@ void Renderer::Render() {
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 }
 
+GLuint Renderer::CreateChunkTexture(std::vector<float> chunk) {
+	GLuint tempTextureID = 0;
+	glGenTextures(1, &tempTextureID);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_1D, tempTextureID);
+
+	glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+
+	glTexImage1D(GL_TEXTURE_1D, 0, GL_R32F, CHUNK_SIZE, 0, GL_RED, GL_FLOAT, chunk.data());
+
+	return tempTextureID;
+}
+
+void Renderer::UpdateChunkTexture(std::vector<float> chunk, int tex) {
+	glBindTexture(GL_TEXTURE_1D, tex);
+	glTexSubImage1D(GL_TEXTURE_1D, 0, 0, CHUNK_SIZE, GL_RED, GL_FLOAT, chunk.data());
+}
+
 void Renderer::onFramebufferSizeCallback(GLFWwindow* mWindow, int width, int height) {
 	glViewport(0, 0, width, height);
+}
+
+void Renderer::onKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+	if (key == GLFW_KEY_E && action == GLFW_PRESS)
+		std::cout << "Issue recompile." << std::endl;
 }

@@ -1,4 +1,4 @@
-#version 460 core
+#version 450 core
 
 in vec3 fragColor;
 
@@ -8,7 +8,9 @@ uniform float deltaTime;
 uniform float programTime;
 uniform ivec2 canvasResolution;
 
-// Code stolen from https://thebookofshaders.com/06/
+uniform sampler1D FFT_data;
+
+// Code referenced from https://thebookofshaders.com/06/
 // Modified main function to translate side-to-side.
 
 vec3 rgb2hsb( in vec3 c ){
