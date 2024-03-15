@@ -6,7 +6,7 @@ Renderer::Renderer() {
 	mWindow = nullptr;
 	mVertexArrayObject = GL_ZERO;
 
-	RunningShaders = { "acsvShader.vert", "RayMarchingExample.frag" };
+	RunningShaders = { "acsvShader.vert", "FFT_Display.frag" };
 }
 
 Renderer::~Renderer() {

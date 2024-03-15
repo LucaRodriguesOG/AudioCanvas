@@ -59,5 +59,8 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="RayMarchingExample.frag" />
+    <None Include="Jump.frag">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
