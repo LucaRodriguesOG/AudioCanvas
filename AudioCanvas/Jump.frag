@@ -22,7 +22,7 @@ float sdBox(vec3 p, vec3 b) {
 float map(vec3 p) {
     // vec3 spherePos = vec3(sin(programTime)*3.0, cos(programTime) * 1.5, 0);
     float s = texture(channel01, gl_FragCoord.x / canvasResolution.x * .5).r * 25;
-    vec3 spherePos = vec3(0, s, 0);
+    vec3 spherePos = vec3(0, 0, s);
     float sphere = sdSphere(p - spherePos, 1.0);
 
     // float box = sdBox(p, vec3(0.75));

@@ -3,6 +3,7 @@
 #include <fftw3.h>
 
 #include "Renderer.h"
+#include "GlobalConstants.h"
 #include <mutex>
 
 const int gDataSize = 441 / 2 + 1;
@@ -52,9 +53,9 @@ void data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uin
 		gData[i] /= sqrt(sum);
 	}
 
-	double maxFrequencyHz = static_cast<double>(maxFreqMagnitude.first) * 44100 / N;
-	std::cout << "Frequency bin with max magnitude: " << maxFrequencyHz
-		<< " (Magnitude: " << maxFreqMagnitude.second << ")" << std::endl;
+	//double maxFrequencyHz = static_cast<double>(maxFreqMagnitude.first) * 44100 / N;
+	//std::cout << "Frequency bin with max magnitude: " << maxFrequencyHz
+	//	<< " (Magnitude: " << maxFreqMagnitude.second << ")" << std::endl;
 
 	// Destroy the plan
 	fftw_destroy_plan(p);
@@ -95,8 +96,6 @@ int main() {
 
 	ma_device_uninit(&device);
 	ma_context_uninit(&context);
-
-	return 0;
 
 	return 0;
 }

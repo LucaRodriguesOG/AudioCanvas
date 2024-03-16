@@ -10,6 +10,10 @@ uniform ivec2 canvasResolution;
 
 uniform sampler1D channel01;
 
+vec3 GetSample(float p) {
+	return texture(channel01, p).rgb;
+}
+
 float sdSphere(vec3 p, float s) {
 	return length(p) - s;
 }
@@ -31,18 +35,32 @@ mat2 rot2D(float angle) {
 }
 
 float map(vec3 p) {
-	vec3 spherePos = vec3(sin(programTime)*3., cos(programTime)*3., 0);
-	float sphere = sdSphere(p - spherePos, 0.2);
+	float s = texture(channel01, 0.05).r * 2;
+    vec3 spherePos = vec3(sin(programTime) * 3., s, 0);
+    float sphere = sdSphere(p - spherePos, 0.8);
 
 	vec3 q = p;
 
-	q = fract(p) - .5;
+	q = fract(p + vec3(sin(programTime), programTime, 0.)) - .5;
+
+	q.xy *= rot2D(programTime);
+	q.yz *= rot2D(-programTime);
+
 
 	float box = sdBox(q, vec3(.1));
 
-	float ground = p.y + 0.75;
+	float ground = p.y + 1.5;
 
 	return smin(ground, smin(sphere, box, 2.), 1.);
+}
+
+vec3 hsb2rgb( in vec3 c ){
+    vec3 rgb = clamp(abs(mod(c.x*6.0+vec3(0.0,4.0,2.0),
+                             6.0)-3.0)-1.0,
+                     0.0,
+                     1.0 );
+    rgb = rgb*rgb*(3.0-2.0*rgb);
+    return c.z * mix(vec3(1.0), rgb, c.y);
 }
 
 void main(void) {
@@ -67,7 +85,7 @@ void main(void) {
 			break;
 	}
 
-	col = vec3(t * 0.05);
+	col = vec3(t * 0.05 * hsb2rgb(vec3(abs(sin(programTime * 0.1)), 1.0, 0.6 + 0.5 * GetSample(0.01).r)));
 
 	outColor = vec4(col, 1.0);
 }

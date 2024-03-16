@@ -11,7 +11,6 @@
 
 class Renderer {
 public:
-	Renderer();
 	Renderer(std::vector<float>*, std::mutex*);
 	~Renderer();
 
@@ -30,9 +29,12 @@ private:
 	static void onFramebufferSizeCallback(GLFWwindow*, int, int);
 	static void onKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
-	double mCompileTime;
+	double mInputTime;
 
-	std::vector<std::string> RunningShaders;
+	std::vector<std::vector<std::string>> mAvailableShaders;
+	int mCurrentShader;
+	bool autoIter;
+	double autoPlayTime;
 
 	GLFWwindow* mWindow;
 	Shader mShader;

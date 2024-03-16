@@ -2,19 +2,20 @@
 
 #include "engine_constants.h"
 
-Renderer::Renderer() {
-	mWindow = nullptr;
-	mVertexArrayObject = GL_ZERO;
-
-	RunningShaders = { "acsvShader.vert", "FFT_Display.frag" };
-	Init();
-}
-
 Renderer::Renderer(std::vector<float>* data, std::mutex* mutex) : mData(data), mDataMutex(mutex) {
 	mWindow = nullptr;
 	mVertexArrayObject = GL_ZERO;
 
-	RunningShaders = { "acsvShader.vert", "FFT_Display.frag" };
+	mAvailableShaders = {
+		{ "acsvShader.vert", "FFT_Display.frag" },
+		{ "acsvShader.vert", "rVisualizer.frag" },
+		{ "acsvShader.vert", "Jump.frag" },
+		{ "acsvShader.vert", "rVisualizer2.frag" }
+	};
+
+	mCurrentShader = 0;
+	autoIter = false;
+
 	Init();
 }
 
@@ -67,11 +68,11 @@ void Renderer::Init() {
 
 		glViewport(0, 0, AUDIOCANVAS_WINDOW_WIDTH, AUDIOCANVAS_WINDOW_HEIGHT);
 
-		mShader.AddShaders(RunningShaders);
+		mShader.AddShaders(mAvailableShaders.at(mCurrentShader));
 
 		mShader.Compile();
 
-		mCompileTime = glfwGetTime();
+		mInputTime = glfwGetTime();
 
 		glGenVertexArrays(1, &mVertexArrayObject);
 
@@ -120,10 +121,35 @@ void Renderer::Run() {
 void Renderer::Input() {
 	if (glfwGetKey(mWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(mWindow, true);
-	if (glfwGetKey(mWindow, GLFW_KEY_SPACE) == GLFW_PRESS && (glfwGetTime() - mCompileTime > 1.0)) {
-		mCompileTime = glfwGetTime();
+	if (glfwGetKey(mWindow, GLFW_KEY_SPACE) == GLFW_PRESS && (glfwGetTime() - mInputTime > 1.0)) {
+		mInputTime = glfwGetTime();
 		std::cout << "Issue recompile" << std::endl;
-		glUseProgram(mShader.Recompile(RunningShaders));
+		glUseProgram(mShader.Recompile(mAvailableShaders.at(mCurrentShader)));
+	}
+	if (glfwGetKey(mWindow, GLFW_KEY_LEFT) == GLFW_PRESS && (glfwGetTime() - mInputTime > 1.0)) {
+		mInputTime = glfwGetTime();
+		std::cout << "Loading Previous Shader" << std::endl;
+		if (mCurrentShader == 0) {
+			mCurrentShader = mAvailableShaders.size() - 1;
+		} else {
+			mCurrentShader--;
+		}
+		glUseProgram(mShader.Recompile(mAvailableShaders.at(mCurrentShader)));
+	}
+	if (glfwGetKey(mWindow, GLFW_KEY_RIGHT) == GLFW_PRESS && (glfwGetTime() - mInputTime > 1.0)) {
+		mInputTime = glfwGetTime();
+		std::cout << "Loading Next Shader" << std::endl;
+		if (mCurrentShader == mAvailableShaders.size() - 1) {
+			mCurrentShader = 0;
+		} else {
+			mCurrentShader++;
+		}
+		glUseProgram(mShader.Recompile(mAvailableShaders.at(mCurrentShader)));
+	}
+	if (glfwGetKey(mWindow, GLFW_KEY_ENTER) == GLFW_PRESS && (glfwGetTime() - mInputTime > 1.0)) {
+		mInputTime = glfwGetTime();
+		std::cout << "Auto-Play Toggled: " << !autoIter << std::endl;
+		autoIter = !autoIter;
 	}
 }
 
@@ -135,6 +161,15 @@ void Renderer::Update(double deltaTime) {
 	if (glfwGetTime() - mUpdateTime > 0.03) {
 		SetRTAudioTexture();
 		mUpdateTime = glfwGetTime();
+	}
+	if (glfwGetTime() - autoPlayTime > 10.0 && autoIter) {
+		autoPlayTime = glfwGetTime();
+		if (mCurrentShader == mAvailableShaders.size() - 1) {
+			mCurrentShader = 0;
+		} else {
+			mCurrentShader++;
+		}
+		glUseProgram(mShader.Recompile(mAvailableShaders.at(mCurrentShader)));
 	}
 }
 
