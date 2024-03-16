@@ -7,6 +7,15 @@ Renderer::Renderer() {
 	mVertexArrayObject = GL_ZERO;
 
 	RunningShaders = { "acsvShader.vert", "FFT_Display.frag" };
+	Init();
+}
+
+Renderer::Renderer(std::vector<float>* data, std::mutex* mutex) : mData(data), mDataMutex(mutex) {
+	mWindow = nullptr;
+	mVertexArrayObject = GL_ZERO;
+
+	RunningShaders = { "acsvShader.vert", "FFT_Display.frag" };
+	Init();
 }
 
 Renderer::~Renderer() {
@@ -14,13 +23,25 @@ Renderer::~Renderer() {
 }
 
 void Renderer::Start() {
-	Init();
 	Run();
 }
 
-void Renderer::SetChannelData(std::vector<std::vector<float>>* channel01, std::vector<std::vector<float>>* channel02) {
-	mChannel01Data = channel01;
-	mChannel02Data = channel02;
+void Renderer::CreateRTAudioTexture() {
+	glGenTextures(1, &mRTAudioTexture);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_1D, mRTAudioTexture);
+
+	glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+
+	glTexImage1D(GL_TEXTURE_1D, 0, GL_R32F, mData->size() / 2, 0, GL_RED, GL_FLOAT, mData->data());
+}
+
+void Renderer::SetRTAudioTexture() {
+	glBindTexture(GL_TEXTURE_1D, mRTAudioTexture);
+	glTexImage1D(GL_TEXTURE_1D, 0, GL_R32F, mData->size(), 0, GL_RED, GL_FLOAT, mData->data());
+	glFinish();
 }
 
 void Renderer::Init() {
@@ -58,9 +79,7 @@ void Renderer::Init() {
 
 		glUseProgram(mShader.GetProgramID());
 
-		mCurrentChunkIndex = 0;
-
-		mChannel01Texture = CreateChunkTexture(mChannel01Data->at(mCurrentChunkIndex));
+		CreateRTAudioTexture();
 	} catch (const std::runtime_error e) {
 		std::cout << "AudioCanvas Renderer Initialization Error: " << e.what() << std::endl;
 		std::cout << "<!-- END OF ERROR --!>" << std::endl;
@@ -71,7 +90,6 @@ void Renderer::Run() {
 	try {
 		double deltaTime = 0.0, lastTime = 0.0, now = 0.0, secondCounter = glfwGetTime();
 		long long framesPerSecond = 0;
-		double chunkTimer1 = glfwGetTime();
 		while (!glfwWindowShouldClose(mWindow)) {
 			now = glfwGetTime();
 			deltaTime = now - lastTime;
@@ -83,12 +101,6 @@ void Renderer::Run() {
 
 			glfwSwapBuffers(mWindow);
 			glfwPollEvents();
-
-			if (glfwGetTime() - chunkTimer1 > (double(CHUNK_SIZE)/SAMPLE_RATE) * 2.0) {
-				mCurrentChunkIndex++;
-				UpdateChunkTexture(mChannel01Data->at(mCurrentChunkIndex % mChannel01Data->size()), mChannel01Texture);
-				chunkTimer1 = glfwGetTime();
-			}
 
 			if (now - secondCounter < 1.0) {
 				framesPerSecond++;
@@ -119,6 +131,11 @@ void Renderer::Update(double deltaTime) {
 	glUniform1f(glGetUniformLocation(mShader.GetProgramID(), "deltaTime"), (float)deltaTime);
 	glUniform1f(glGetUniformLocation(mShader.GetProgramID(), "programTime"), (float)glfwGetTime());
 	glUniform2i(glGetUniformLocation(mShader.GetProgramID(), "canvasResolution"), AUDIOCANVAS_WINDOW_WIDTH, AUDIOCANVAS_WINDOW_HEIGHT);
+	std::lock_guard<std::mutex> lock(*mDataMutex);
+	if (glfwGetTime() - mUpdateTime > 0.03) {
+		SetRTAudioTexture();
+		mUpdateTime = glfwGetTime();
+	}
 }
 
 void Renderer::Render() {
@@ -126,26 +143,6 @@ void Renderer::Render() {
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	glDrawArrays(GL_TRIANGLES, 0, 6);
-}
-
-GLuint Renderer::CreateChunkTexture(std::vector<float> chunk) {
-	GLuint tempTextureID = 0;
-	glGenTextures(1, &tempTextureID);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_1D, tempTextureID);
-
-	glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-
-	glTexImage1D(GL_TEXTURE_1D, 0, GL_R32F, CHUNK_SIZE, 0, GL_RED, GL_FLOAT, chunk.data());
-
-	return tempTextureID;
-}
-
-void Renderer::UpdateChunkTexture(std::vector<float> chunk, int tex) {
-	glBindTexture(GL_TEXTURE_1D, tex);
-	glTexSubImage1D(GL_TEXTURE_1D, 0, 0, CHUNK_SIZE, GL_RED, GL_FLOAT, chunk.data());
 }
 
 void Renderer::onFramebufferSizeCallback(GLFWwindow* mWindow, int width, int height) {
