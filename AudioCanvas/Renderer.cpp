@@ -5,7 +5,7 @@
 Renderer::Renderer(std::vector<float>* data, std::mutex* mutex) : mData(data), mDataMutex(mutex) {
 	mWindow = nullptr;
 	mVertexArrayObject = GL_ZERO;
-
+  
 	mAvailableShaders = {
 		{ "acsvShader.vert", "FFT_Display.frag" },
 		{ "acsvShader.vert", "rVisualizer.frag" },
