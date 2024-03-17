@@ -142,7 +142,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="FFT_Display.frag" />
+    <None Include="Jump.frag" />
     <None Include="RayMarchingExample.frag" />
+    <None Include="rVisualizer.frag" />
+    <None Include="rVisualizer2.frag" />
     <None Include="TestShader.frag" />
     <None Include="acsvShader.vert" />
   </ItemGroup>
