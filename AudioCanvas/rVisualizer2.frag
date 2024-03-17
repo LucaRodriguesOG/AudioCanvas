@@ -39,7 +39,7 @@ void main(void) {
 
 	float d = length(uv);
 
-	vec3 col = palette(length(uv0));
+	vec3 col = palette(length(uv0) + sin(programTime*0.1));
 
 	d = sin(d * 8. + programTime)/8.;
 	d = abs(d);

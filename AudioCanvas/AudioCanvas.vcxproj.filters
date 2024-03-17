@@ -58,8 +58,16 @@
     <None Include="FFT_Display.frag">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="RayMarchingExample.frag" />
     <None Include="Jump.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="rVisualizer2.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="RayMarchingExample.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="rVisualizer.frag">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

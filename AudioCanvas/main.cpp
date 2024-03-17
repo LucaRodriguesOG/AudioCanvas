@@ -21,7 +21,6 @@ void data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uin
 	fftw_complex out[N / 2 + 1]; // Output array
 	fftw_plan p;
 
-	// Initialize the input data with some values
 	for (int i = 0; i < N; i++) {
 		in[i] = samples[i];
 	}
