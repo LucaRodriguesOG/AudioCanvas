@@ -58,7 +58,7 @@ float map(vec3 p) {
 
     //  vec3(0, 1/sqrt(2), 1/sqrt(2))
     vec3 backPosition = vec3(0, 0, 0);
-    float back = sdPlane(p, normalize(vec3(0., 25., -150.)), 40);
+    float back = sdPlane(p, normalize(vec3(0, 50, -150)), 40);
    
     // sphere
     float s = GetSample(gl_FragCoord.x / canvasResolution.x * .5).x * 20;
@@ -66,8 +66,8 @@ float map(vec3 p) {
     float sphere = sdSphere(p - spherePos, 10);
 
     // box
-    float s2 = GetSample(.14).x;
-    vec3 q = p + vec3(0, 1. - s2 * .8, 0);
+    float s2 = GetSample(.1).x;
+    vec3 q = p + vec3(0, 1. - s2, 0);
     q.xz = fract(p + vec3(sin(programTime * .5), 0., programTime)).xz - .5;
     q.xy *= rot2D(sin(programTime * .5));
     //q.yz *= rot2D(programTime);
@@ -104,16 +104,16 @@ void main(void) {
     // color
     vec2 q = gl_FragCoord.xy / canvasResolution.xy;
     if (t >= 40) {
-        col = mix(vec3(.2, 0, .0), vec3(0, 0, .2), t * .01);
+        col = mix(vec3(.9, .3, .0), vec3(0, 0, .2), t * .01);
     }
     else if (t > 37 && gl_FragCoord.y / canvasResolution.y > 2) {
         col = vec3(1,1,1);
     }
     else if (t > 13 && (gl_FragCoord.y / canvasResolution.y) < 2) {
-        col = mix(vec3(.9, .7, .0), vec3(.7, .4, .0), t * .15);
+        col = mix(vec3(.9, .7, .0), vec3(.8, .5, .0), t * .15);
     }
     else if (t > 0){
-        col = t * mix(vec3(.0, .0, .05), vec3(.0, .0, .0), sqrt(t) * .01);
+        col = t * mix(vec3(.04, .02, .0), vec3(.0, .0, .08), 1 - (t * .08)); // sqrt(t) * .01
     }
 
     outColor = vec4(col, 1.0);

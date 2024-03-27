@@ -48,5 +48,5 @@ void main(void) {
 
 	col *= pow(d, GrabSample(0.14) * 0.4);
 
-	outColor = vec4(col, 1.0);
+	outColor = vec4(1-col, 1.0);
 }

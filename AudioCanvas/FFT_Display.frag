@@ -41,8 +41,10 @@ void main(void) {
     vec3 color = vec3(1.0, 0.0, 1.0);
     vec2 st = vec2(gl_FragCoord.x + (programTime*200.0), gl_FragCoord.y) / canvasResolution;
 
+   
+
     if (texture(channel01, gl_FragCoord.x / canvasResolution.x * 2.0).r * 0.5 > abs(gl_FragCoord.y / canvasResolution.y - 0.5)) {
-        color = hsb2rgb(vec3(st.x, 1.0, 1 - st.y));
+        color = vec3(0.34) + vec3(gl_FragCoord.y / canvasResolution.y, 0., gl_FragCoord.x / canvasResolution.x);
     } else {
         color = vec3(0.1);
     }
